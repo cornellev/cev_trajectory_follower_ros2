@@ -198,10 +198,10 @@ private:
 
         float vel = 0;
 
-        if (target.v > .01 && target.v < .2) {
-            target.v = .2;
-        } else if (target.v < -.01 && target.v > -.2) {
-            target.v = -.2;
+        if (target.v > .01 && target.v < .4) {
+            target.v = .4;
+        } else if (target.v < -.01 && target.v > -.4) {
+            target.v = -.4;
         }
 
         // publish_ackermann_drive(steering_angle, vel);

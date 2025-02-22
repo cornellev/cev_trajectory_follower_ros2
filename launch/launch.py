@@ -10,7 +10,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             Node(
-                package="controls",
+                package="trajectory_follower",
                 executable="trajectory_follower_node",
                 name="trajectory_node",
             ),
