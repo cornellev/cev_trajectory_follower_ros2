@@ -46,6 +46,10 @@ private:
 
     bool waypoints_initialized = false;
 
+    float start_time;
+
+    float timestep = 0;
+
     std::vector<Waypoint> waypoints;
     size_t current_waypoint = 0;
 
@@ -124,7 +128,7 @@ private:
                   + (current.y - target.y) * (next.y - target.y);
         }
 
-        return dist < .1 && dot > 0;
+        return dist < .2;
     }
 
     float find_steering_angle(Coordinate& current, Waypoint& target) {
@@ -148,6 +152,16 @@ private:
 
     void odometry_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
         if (!waypoints_initialized || current_waypoint >= waypoints.size()) {
+            publish_ackermann_drive(0.0, 0.0);
+            return;
+        }
+
+        float current_time = static_cast<float>(this->now().seconds());
+        float time_elapsed = current_time - start_time;
+
+        if (time_elapsed
+            > timestep * waypoints.size() / 2.0) {  // Too much time elapsed without a new message
+            publish_ackermann_drive(0.0, 0.0);
             return;
         }
 
@@ -211,7 +225,9 @@ private:
     void trajectory_callback(const cev_msgs::msg::Trajectory::SharedPtr msg) {
         waypoints = msg->waypoints;
         current_waypoint = 0;
+        timestep = msg->timestep;
         waypoints_initialized = true;
+        start_time = static_cast<float>(this->now().seconds());
     }
 };
 
